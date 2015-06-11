@@ -37,3 +37,9 @@ strings """)
 - use `apply` to 'explode' a list of arguments. For example, to
   flatten an array: `(apply #'append 'array)`
 
+[06.03.2015]
+
+- use `when` and `unless` if the conditional doesn't have an
+  `else`. Unlike `if` these statements allow multiple
+statements in their bodies. To do the same with `if` you shoud use
+`progn`.
