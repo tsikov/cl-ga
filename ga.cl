@@ -98,13 +98,11 @@
           (expt (- sum goal-sum) 2)
           (expt (- product goal-product) 2))))))
 
-; !
 ; generate a random number between 0 and (2 ^ chromosome-length) - 1
 (defun generate-chromosome (length-of-chromosome)
   (random
     (expt 2 length-of-chromosome)))
 
-; !
 (defun generate-population (population-count length-of-chromosome)
   ; create a list of nils and generate a chromosome for each element of the list
   (mapcar
@@ -112,14 +110,12 @@
       (generate-chromosome length-of-chromosome))
     (make-list population-count)))
 
-; !
 (defun accumulated-normalized-fitnesses (population)
   (accumulate-list
     (normalize-list
       ; calculate each fitness
       (mapcar #'fitness-fn population))))
 
-; !
 (defun draw (population accumulated-normalized-fitnesses)
   "Draw a chromosome from the population with a probability relative to it's fitness function"
   (let ((random-number (random 1.0)))
@@ -137,7 +133,6 @@
     ()
     chromosomes))
 
-; !
 (defun next-generation (population)
   (let ((new-population)
         (accumulated-normalized-fitnesses (accumulated-normalized-fitnesses population)))
@@ -146,7 +141,6 @@
    ; cross and mutate
    (mapcar #'cross (in-groups-of-two new-population))))
 
-; !
 (defun run (generations population-count length-of-chromosome)
   ; init a population
   (let (population (generate-population population-count length-of-chromosome))
