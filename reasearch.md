@@ -18,7 +18,7 @@
 - learned what `dolist`, `make-list` and `make-array` do.
 - the `loop` macro is a DSL on its own. Accordint to SO, some lispers
   like it and other hate it. I am in neither camp so far.
-- `let` creates variable bindings IN PARALEL. To create the
+- `let` creates variable bindings IN PARALLEL. To create the
   bindigs sequentially you should use `let*`. Lost one lovely hour in debugging.
 
 [05.03.2015]
