@@ -128,9 +128,35 @@
         (when (<= random-number af) (return i)))
       population)))
 
-(defun cross (chromosomes)
+(defun split-chromosome-by-index (chromosome idx)
+  "Given a chromosome and an index, return two chromosomes for the split placed."
+  (let ((first-part (logand chromosome (- (expt 2 idx) 1))))
+    (list first-part (- chromosome first-part))))
+
+(defun mutate (length-of-chromosome chromosomes)
+  (mapcar
+    (lambda (chromosome)
+      (dotimes (i length-of-chromosome chromosome)
+        (when (< (random 1.0) *mutation-rate*)
+          ; bitflip the bit in question
+          (setf chromosome (logxor (expt 2 i) chromosome)))))
+    chromosomes))
+
+(defun cross (chromosomes length-of-chromosome)
   (if (< (random 1.0) *crossover-rate*)
-    ()
+    (let ((lst (mapcar #'split-chromosome-by-index
+              chromosomes
+
+              ; create a list with two random indexes for the chromosomes to be split
+              ; idx is in [0..chromosome-length-1]
+              ; TODO off by 1 error with indexes - sometimes no change in chromosomes (when 0)
+              (make-list 2 :initial-element (random (- length-of-chromosome 1))))))
+
+      ; sum the first element of first list with second element of second list and SF with FS
+      ; mutate and return the result
+      (mutate length-of-chromosome (list (+ (caar lst) (cadadr lst)) (+ (cadar lst) (caadr lst)))))
+
+    ; no crossover -> return the chromosomes intact
     chromosomes))
 
 (defun next-generation (population)
