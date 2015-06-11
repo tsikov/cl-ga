@@ -68,7 +68,7 @@
 ; TODO this function is too imperative. Must be rewritten in more functional style
 (defun fitness-fn (chromosome)
   "Calculate the fitness of the chromosome."
-  (let ((dataset '(12 12 1 15 8 8 8 9 4 1))
+  (let ((dataset '(1 6 7 3 4 3 6 9 2 5 10 5 5 9 7 3 2 6 1 1 1 10 4 3 7 7 3 8 1 10 3 1 8 2))
         (binary-chromosome)
         (sum 0)
         (product 1)
@@ -155,7 +155,6 @@
       (setf population (next-generation population)))))
 
 ; lets do this!
-(run 10 10 10)
-
+(run 100 100 34)
 
 
