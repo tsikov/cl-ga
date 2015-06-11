@@ -1,7 +1,7 @@
 ; define constants
 
-(defvar *crossover-rate* 0.6)
-(defvar *mutation-rate* 0.001)
+(defvar *crossover-rate* 0.5)
+(defvar *mutation-rate* 0.15)
 
 ; define helper functions
 
@@ -106,8 +106,7 @@
 (defun generate-population (population-count length-of-chromosome)
   ; create a list of nils and generate a chromosome for each element of the list
   (mapcar
-    (lambda (_)
-      (generate-chromosome length-of-chromosome))
+    (lambda (_) _ (generate-chromosome length-of-chromosome))
     (make-list population-count)))
 
 (defun accumulated-normalized-fitnesses (population)
@@ -159,20 +158,23 @@
     ; no crossover -> return the chromosomes intact
     chromosomes))
 
-(defun next-generation (population)
+(defun next-generation (population length-of-chromosome)
+  (print (apply #'max (mapcar #'fitness-fn population)))
   (let ((new-population)
         (accumulated-normalized-fitnesses (accumulated-normalized-fitnesses population)))
    (dotimes (i (length population) new-population)
      (push (draw population accumulated-normalized-fitnesses) new-population))
    ; cross and mutate
-   (mapcar #'cross (in-groups-of-two new-population))))
+   (apply #'append (mapcar #'cross
+           (in-groups-of-two new-population)
+           (make-list (/ length-of-chromosome 2) :initial-element length-of-chromosome)))))
 
 (defun run (generations population-count length-of-chromosome)
   ; init a population
-  (let (population (generate-population population-count length-of-chromosome))
+  (let ((population (generate-population population-count length-of-chromosome)))
     ; itarate next-genration generation-count times
-    (dotimes (_ generation-count population)
-      (setf population (next-generation population)))))
+    (dotimes (_ generations population)
+      (setf population (next-generation population length-of-chromosome)))))
 
 ; lets do this!
 (run 100 100 34)
