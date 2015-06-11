@@ -27,8 +27,7 @@
 - `nconc` has side effects. Use `append` instead.
 - learn about bit operands and bit-related funtions. `integer-length` counts the number of bits an
   integer has.
-- learned about documentation
-  strings on function declaration. (Much like python's """ doc
+- learned about documentation strings on function declaration. (Much like python's """ doc
 strings """)
 - to read the doc string of any function use `(documentation 'fn-name 'function)` to get the doc string only or `(describe 'fn-name)` for more throught information.
 - you can have a variable and a function with the same name.
