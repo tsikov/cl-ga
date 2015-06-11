@@ -44,12 +44,12 @@
 
 ; transform a number into a list of it's bits
 ; needed for the fitness fn
-; shamelessly stolen from SO
-(defun binary-list (n &optional acc)
+; shamelessly stolen from Stack Overflow
+(defun number-to-binary-list (n &optional acc)
   (cond ((zerop n) (or acc (list 0)))
         ((plusp n)
-         (binary-list (ash n -1) (cons (logand 1 n) acc)))
-        (t (error "~S: non-negative argument required, got ~s" 'binary-list n))))
+         (number-to-binary-list (ash n -1) (cons (logand 1 n) acc)))
+        (t (error "~S: non-negative argument required, got ~s" 'number-to-binary-list n))))
 
 (defun add-zeroes (chromosome dataset)
   (append
@@ -60,7 +60,7 @@
         (length dataset)
         (integer-length chromosome))
       :initial-element 0)
-    (binary-list chromosome)))
+    (number-to-binary-list chromosome)))
 
 ; end of helper functions
 
