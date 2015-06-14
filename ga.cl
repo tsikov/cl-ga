@@ -20,6 +20,8 @@
         sum)
       lst)))
 
+(defun best-fitness (population)
+  (apply #'max (mapcar (memd-fitness-fn) population)))
 
 (defun memoize (fn)
   "From Wikipedia: Memoization is an optimization technique used primarily to
@@ -189,7 +191,8 @@
 (defun next-generation (population length-of-chromosome)
   "Get a population and return the new population."
   ; print the the best fitness from the population
-  (print (apply #'max (mapcar #'fitness-fn population)))
+  (print (best-fitness population))
+
   (let ((new-population)
         (accumulated-normalized-fitnesses (accumulated-normalized-fitnesses population)))
    (dotimes (i (length population) new-population)
