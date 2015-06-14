@@ -49,9 +49,9 @@
   http://stackoverflow.com/questions/3513128/transposing-lists-in-common-lisp"
   (apply #'mapcar #'list list-of-lists))
 
-(defun unzip (list)
+(defun unzip (lst)
   "Get a list and return two lists of the even elements and the odd elements"
-  (loop for (x y) on list by #'cddr
+  (loop for (x y) on lst by #'cddr
         collect x into evens
         collect y into odds
         finally (return (list evens odds))))
@@ -75,16 +75,19 @@
          (number-to-binary-list (ash n -1) (cons (logand 1 n) acc)))
         (t (error "~S: non-negative argument required, got ~s" 'number-to-binary-list n))))
 
-(defun add-zeroes (chromosome dataset)
-  (append
-    (make-list
-      ; TODO add assert. number shoud be positive
-      ; how much zeroes should we add?
-      (-
-        (length dataset)
-        (integer-length chromosome))
-      :initial-element 0)
-    (number-to-binary-list chromosome)))
+(defun add-zeroes (chromosome dataset-length)
+  (let ((number-of-zeroes
+         (-
+           dataset-length
+           (integer-length chromosome))))
+    (if (< number-of-zeroes 0)
+      (error "Dataset is bigger than chromosome"))
+    (append
+      (make-list
+        ; how much zeroes should we add?
+        number-of-zeroes
+        :initial-element 0)
+      (number-to-binary-list chromosome))))
 
 ; end of helper functions
 
@@ -99,7 +102,7 @@
         (goal-product 40))
 
     ; let defines the variables in paralel so...
-    (setf binary-chromosome (add-zeroes chromosome dataset))
+    (setf binary-chromosome (add-zeroes chromosome (length dataset)))
 
     ; calculate sum and product
     ; for each bit == 0 -> sum     += dataset[i]
@@ -137,7 +140,6 @@
 (defun accumulated-normalized-fitnesses (population)
   (accumulate-list
     (normalize-list
-      ; calculate each fitness
       (mapcar (memd-fitness-fn) population))))
 
 (defun draw (population accumulated-normalized-fitnesses)
