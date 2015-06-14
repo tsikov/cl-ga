@@ -42,10 +42,10 @@
 (defun normalize-number (n)
   (/ 1 (+ n 1)))
 
-; transform a number into a list of it's bits
 ; needed for the fitness fn
 ; shamelessly stolen from Stack Overflow
 (defun number-to-binary-list (n &optional acc)
+  "Transform a number into a list of it's bits."
   (cond ((zerop n) (or acc (list 0)))
         ((plusp n)
          (number-to-binary-list (ash n -1) (cons (logand 1 n) acc)))
@@ -98,13 +98,13 @@
           (expt (- sum goal-sum) 2)
           (expt (- product goal-product) 2))))))
 
-; generate a random number between 0 and (2 ^ chromosome-length) - 1
 (defun generate-chromosome (length-of-chromosome)
+  "Generate a random number between 0 and (2 ^ chromosome-length) - 1."
   (random
     (expt 2 length-of-chromosome)))
 
 (defun generate-population (population-count length-of-chromosome)
-  ; create a list of nils and generate a chromosome for each element of the list
+  "Create a list of nils and generate a chromosome for each element of the list."
   (mapcar
     (lambda (_) _ (generate-chromosome length-of-chromosome))
     (make-list population-count)))
@@ -133,6 +133,7 @@
     (list first-part (- chromosome first-part))))
 
 (defun mutate (length-of-chromosome chromosomes)
+  "Every bit in the chromosome has a *mutation-rate* chance of being flipped."
   (mapcar
     (lambda (chromosome)
       (dotimes (i length-of-chromosome chromosome)
@@ -142,6 +143,10 @@
     chromosomes))
 
 (defun cross (chromosomes length-of-chromosome)
+  "Has a *crossover-rate* chance to cross two cromosomes. If it doesn't -> just returns the
+  chromosomes. If it does -> randomly splits the chromosomes in two and swaps their bits. After
+  this operation is completed, initiate mutation. Only crossed chromosomes have a chance of being
+  mutated."
   (if (< (random 1.0) *crossover-rate*)
     (let ((lst (mapcar #'split-chromosome-by-index
               chromosomes
@@ -159,6 +164,8 @@
     chromosomes))
 
 (defun next-generation (population length-of-chromosome)
+  "Get a population and return the new population."
+  ; print the the best fitness from the population
   (print (apply #'max (mapcar #'fitness-fn population)))
   (let ((new-population)
         (accumulated-normalized-fitnesses (accumulated-normalized-fitnesses population)))
@@ -170,6 +177,7 @@
            (make-list (/ length-of-chromosome 2) :initial-element length-of-chromosome)))))
 
 (defun run (generations population-count length-of-chromosome)
+  "Iterate 'generations' times over 'next-generation' function."
   ; init a population
   (let ((population (generate-population population-count length-of-chromosome)))
     ; itarate next-genration generation-count times
