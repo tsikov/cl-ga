@@ -20,6 +20,28 @@
         sum)
       lst)))
 
+
+(defun memoize (fn)
+  "From Wikipedia: Memoization is an optimization technique used primarily to
+  speed up computer programs by storing the results of expensive function
+  calls and returning the cached result when the same inputs occur again.
+  This implementation gets a function and returns another function from whitin
+  a lexical scope that contains a *cache* variable which we use to store the
+  arguments and corresponding results from function calls. The lexical scope is
+  important for us in order to be able to access the variable the second/third/etc...
+  time the anonymous, inner function is called."
+  (let ((*cache* (make-hash-table)))
+   (lambda (x)
+     ; how many entries are in the *cache*? Uncomment to check.
+     ; (print (hash-table-count *cache*))
+
+     ; check if the argument is in the cache. (gethash) has multiple return
+     ; values. to see if the key is present in the hash-table we should get
+     ; the second value.
+     (if (multiple-value-bind (value present) (gethash x *cache*) present)
+       (gethash x *cache*)
+       (setf (gethash x *cache*) (funcall fn x))))))
+
 (defun rotate (list-of-lists)
   "Transposes an array. How it works? Magic.
   http://stackoverflow.com/questions/3513128/transposing-lists-in-common-lisp"
@@ -64,7 +86,6 @@
 
 ; end of helper functions
 
-; TODO memoization
 ; TODO this function is too imperative. Must be rewritten in more functional style
 (defun fitness-fn (chromosome)
   "Calculate the fitness of the chromosome."
@@ -98,6 +119,8 @@
           (expt (- sum goal-sum) 2)
           (expt (- product goal-product) 2))))))
 
+(defun memd-fitness-fn () (memoize #'fitness-fn))
+
 (defun generate-chromosome (length-of-chromosome)
   "Generate a random number between 0 and (2 ^ chromosome-length) - 1."
   (random
@@ -113,7 +136,7 @@
   (accumulate-list
     (normalize-list
       ; calculate each fitness
-      (mapcar #'fitness-fn population))))
+      (mapcar (memd-fitness-fn) population))))
 
 (defun draw (population accumulated-normalized-fitnesses)
   "Draw a chromosome from the population with a probability relative to it's fitness function"
