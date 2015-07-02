@@ -126,16 +126,14 @@
 
 (defun memd-fitness-fn () (memoize #'fitness-fn))
 
-(defun generate-chromosome (length-of-chromosome)
+(defun generate-chromosome (chromosome-length)
   "Generate a random number between 0 and (2 ^ chromosome-length) - 1."
   (random
-    (expt 2 length-of-chromosome)))
+    (expt 2 chromosome-length)))
 
 (defun generate-population (population-count length-of-chromosome)
-  "Create a list of nils and generate a chromosome for each element of the list."
-  (mapcar
-    (lambda (_) _ (generate-chromosome length-of-chromosome))
-    (make-list population-count)))
+  "Create a list (the population) filled with random numbers (chromosomes)."
+  (loop repeat population-count collect (generate-chromosome chromosome-length)))
 
 (defun accumulated-normalized-fitnesses (population)
   (accumulate-list
